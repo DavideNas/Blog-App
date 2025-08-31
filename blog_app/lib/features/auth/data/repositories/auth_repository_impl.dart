@@ -3,7 +3,8 @@ import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/features/auth/data/datasources/auth_remote_data_sources.dart';
 import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
-import 'package:fpdart/src/either.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSources remoteDataSource;
@@ -43,8 +44,11 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await fn();
       // RETURN USER VALUE
       return right(user);
+    } on sb.AuthException catch (e) {
+      // EMIT AN ERROR IF SUPABASE AUTH ERROR
+      return left(Failure(e.message));
     } on ServerExceptions catch (e) {
-      // EMIT AN ERROR IF SOMETHING GOES WRONG
+      // EMIT AN ERROR IF SERVER ERROR
       return left(Failure(e.message));
     }
   }
