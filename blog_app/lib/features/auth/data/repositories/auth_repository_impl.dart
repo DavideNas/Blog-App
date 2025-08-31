@@ -13,9 +13,13 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> loginWithEmailAndPassword({
     required String email,
     required String password,
-  }) {
-    // TODO: implement loginWithEmailAndPassword
-    throw UnimplementedError();
+  }) async {
+    return _getUser(
+      () async => await remoteDataSource.loginWithEmailAndPassword(
+        email: email,
+        password: password,
+      ),
+    );
   }
 
   @override
@@ -24,14 +28,20 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    try {
-      // CALL SIGNUP FUNCTION ON SUPABASE
-      final user = await remoteDataSource.signUpWithEmailAndPassword(
+    return _getUser(
+      () async => await remoteDataSource.signUpWithEmailAndPassword(
         name: name,
         email: email,
         password: password,
-      );
-      // RETURN UD VALUE
+      ),
+    );
+  }
+
+  Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
+    try {
+      // CALL FUNCTION AS LAYOUT
+      final user = await fn();
+      // RETURN USER VALUE
       return right(user);
     } on ServerExceptions catch (e) {
       // EMIT AN ERROR IF SOMETHING GOES WRONG
