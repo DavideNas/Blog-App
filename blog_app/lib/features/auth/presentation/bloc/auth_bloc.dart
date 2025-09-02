@@ -26,6 +26,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
        _currentUser = currentUser,
        _appUserCubit = appUserCubit,
        super(AuthInitial()) {
+    // TO REPLACE AuthLogin FROM FUNCTIONS
+    on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isUserLoggedIn);
@@ -45,7 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
     // LOADING : WHILE DATA ARE IN TRANSFER
-    emit(AuthLoading());
+    // emit(AuthLoading());
     // RESPONSE FROM SIGNUP
     final res = await _userSignUp(
       UserSignUpParams(
@@ -65,7 +67,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthLogin(AuthLogin event, Emitter<AuthState> emit) async {
     // LOADING WHILE DATA ARE IN TRANSFER
-    emit(AuthLoading());
+    // emit(AuthLoading());
     // RESPONSE FROM LOGIN
     final res = await _userLogin(
       UserLoginParams(email: event.email, password: event.password),
