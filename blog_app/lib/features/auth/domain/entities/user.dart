@@ -1,5 +1,4 @@
 // Entity to map user table
-
 class User {
   // ID
   final String id;
